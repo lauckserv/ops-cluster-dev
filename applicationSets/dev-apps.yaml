@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: dev-apps
+  labels:
+    lauckserv.io/environment: dev
+    lauckserv.io/category: app-set
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/lauckserv/ops-cluster-dev
+        revision: HEAD
+        directories:
+          - path: apps/**/*
+  template:
+    metadata:
+      name: "{{path.basename}}"
+      labels:
+        lauckserv.io/environment: dev
+        lauckserv.io/category: app
+    spec:
+      project: "{{ path[1] }}-apps"
+      source:
+        repoURL: https://github.com/lauckserv/ops-cluster-dev
+        path: "{{ path }}"
+        targetRevision: main
+        helm:
+          valueFiles:
+            - values.yaml
+      destination:
+        server: https://rancher.lauckserv.net/k8s/clusters/c-m-qhr8b78m
+        namespace: "{{ path[2] }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
