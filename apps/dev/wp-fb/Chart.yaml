@@ -1,5 +1,5 @@
 apiVersion: v2
-name: wordpress
+name: wp-fb
 description: WordPress is a widely used open‑source CMS for building and managing websites, powered by PHP and backed by a MySQL‑compatible database.
 type: application
 version: 4.6.2
