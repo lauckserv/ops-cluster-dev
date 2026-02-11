@@ -28,7 +28,7 @@ spec:
           valueFiles:
             - values.yaml
       destination:
-        server: https://rancher.lauckserv.net/k8s/clusters/c-m-qhr8b78m
+        server: https://rancher.lauckserv.net/k8s/clusters/c-m-m59fwj8l
         namespace: "{{ path[2] }}"
       syncPolicy:
         automated:
