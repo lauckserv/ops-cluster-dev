@@ -4,11 +4,12 @@ wordpress:
     fullnameOverride: wordpress
   controllers:
     main:
+      enabled: true
       type: deployment
       strategy: Recreate
       replicas: 1
       containers:
-        main:
+        wordpress:
           image:
             repository: wordpress
             tag: 6.9.1
