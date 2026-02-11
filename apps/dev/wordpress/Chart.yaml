@@ -1,5 +1,5 @@
 apiVersion: v2
-name: wordpress-dev
+name: wordpress
 description: WordPress is a widely used open‑source CMS for building and managing websites, powered by PHP and backed by a MySQL‑compatible database.
 type: application
 version: 4.6.2
@@ -8,4 +8,4 @@ dependencies:
   - name: app-template
     version: 4.6.2
     repository: https://bjw-s-labs.github.io/helm-charts
-    alias: wordpress-dev
+    alias: wordpress
