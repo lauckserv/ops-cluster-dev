@@ -1,7 +1,5 @@
 wordpress:
   enabled: true
-  global: 
-    fullnameOverride: wordpress
   controllers:
     wordpress:
       enabled: true
