@@ -80,8 +80,8 @@ wordpress:
       containers:
         mysql:
           image:
-            repository: mysql
-            tag: "8.0"
+            repository: mariadb
+            tag: "12.1.2"
             pullPolicy: IfNotPresent
           env:
             MYSQL_ROOT_PASSWORD:
