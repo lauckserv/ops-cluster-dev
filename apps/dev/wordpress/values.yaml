@@ -22,7 +22,7 @@ wordpress:
               valueFrom:
                 secretKeyRef:
                   name: wp-mysql-secret
-                  key: mysql-password
+                  key: mysql-secret
             WORDPRESS_TABLE_PREFIX: wp_
             WORDPRESS_DEBUG: "0"
             
@@ -82,14 +82,14 @@ wordpress:
               valueFrom:
                 secretKeyRef:
                   name: wp-mysql-secret
-                  key: mysql-root-password
+                  key: mysql-secret
             MYSQL_DATABASE: wordpress
             MYSQL_USER: wordpress
             MYSQL_PASSWORD:
               valueFrom:
                 secretKeyRef:
                   name: wp-mysql-secret
-                  key: mysql-password
+                  key: mysql-secret
           
           probes:
             liveness:
@@ -156,7 +156,7 @@ wordpress:
       annotations:
         kubernetes.io/ingress.class: nginx
       hosts:
-        - host: wp-dev.lauckserv.net
+        - host: wordpress.lauckserv.net
           paths:
             - path: /
               pathType: Prefix
@@ -216,12 +216,3 @@ wordpress:
               Header always set X-Frame-Options DENY
               Header always set X-XSS-Protection "1; mode=block"
           </IfModule>
-
-  # Pod Security Context
-  podSecurityContext:
-    fsGroup: 33  # www-data group
-    
-  # Service Account
-  serviceAccount:
-    create: true
-    name: wordpress-dev
