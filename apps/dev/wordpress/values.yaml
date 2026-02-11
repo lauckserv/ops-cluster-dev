@@ -3,7 +3,7 @@ wordpress:
   global: 
     fullnameOverride: wordpress
   controllers:
-    main:
+    wordpress:
       enabled: true
       type: deployment
       strategy: Recreate
@@ -72,7 +72,12 @@ wordpress:
               drop:
                 - ALL
 
-        # MySQL Database Container
+    mysql:
+      enabled: true
+      type: deployment
+      strategy: Recreate
+      replicas: 1
+      containers:
         mysql:
           image:
             repository: mysql
@@ -135,15 +140,15 @@ wordpress:
             readOnlyRootFilesystem: false
 
   service:
-    main:
-      controller: main
+    wordpress:
+      controller: wordpress
       ports:
         http:
           port: 80
           targetPort: 80
           protocol: TCP
     mysql:
-      controller: main
+      controller: mysql
       ports:
         mysql:
           port: 3306
@@ -151,7 +156,7 @@ wordpress:
           protocol: TCP
 
   ingress:
-    main:
+    wordpress:
       enabled: true
       className: nginx
       annotations:
@@ -162,7 +167,7 @@ wordpress:
             - path: /
               pathType: Prefix
               service:
-                identifier: main
+                identifier: wordpress
                 port: http
 
   persistence:
@@ -172,8 +177,10 @@ wordpress:
       size: 10Gi
       storageClass: nfs-client
       accessMode: ReadWriteOnce
-      globalMounts:
-        - path: /var/www/html
+      advancedMounts:
+        wordpress:
+          wordpress:
+            - path: /var/www/html
       retain: true
 
     mysql-data:
@@ -182,8 +189,10 @@ wordpress:
       size: 5Gi
       storageClass: nfs-client
       accessMode: ReadWriteOnce
-      globalMounts:
-        - path: /var/lib/mysql
+      advancedMounts:
+        mysql:
+          mysql:
+            - path: /var/lib/mysql
       retain: true
 
   # ConfigMaps for additional configuration
