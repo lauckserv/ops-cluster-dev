@@ -7,7 +7,7 @@ metadata:
     lauckserv.io/category: resources
 spec:
   destination:
-    server: https://rancher.lauckserv.net/k8s/clusters/c-m-qhr8b78m
+    server: https://rancher.lauckserv.net/k8s/clusters/c-m-m59fwj8l
     namespace: cluster-tools
   project: cluster-tools
   source:
