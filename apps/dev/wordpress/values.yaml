@@ -156,7 +156,7 @@ wordpress:
       annotations:
         kubernetes.io/ingress.class: nginx
       hosts:
-        - host: wp-dev.lauckserv.net
+        - host: wordpress.lauckserv.net
           paths:
             - path: /
               pathType: Prefix
@@ -216,12 +216,3 @@ wordpress:
               Header always set X-Frame-Options DENY
               Header always set X-XSS-Protection "1; mode=block"
           </IfModule>
-
-  # Pod Security Context
-  podSecurityContext:
-    fsGroup: 33  # www-data group
-    
-  # Service Account
-  serviceAccount:
-    create: true
-    name: wordpress-dev
