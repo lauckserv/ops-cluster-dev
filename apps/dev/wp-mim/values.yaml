@@ -160,7 +160,7 @@ wordpress:
       annotations:
         kubernetes.io/ingress.class: nginx
       hosts:
-        - host: www.mildlyimpressivemedia.com
+        - host: dev.mildlyimpressivemedia.com
           paths:
             - path: /
               pathType: Prefix
