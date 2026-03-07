@@ -162,7 +162,7 @@ wordpress:
       annotations:
         kubernetes.io/ingress.class: nginx
       hosts:
-        - host: moonareafootball.mildlyimpressivemedia.com
+        - host: football.lauckserv.net
           paths:
             - path: /
               pathType: Prefix
