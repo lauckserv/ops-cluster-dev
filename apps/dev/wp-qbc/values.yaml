@@ -138,14 +138,13 @@ wordpress:
               spec:
                 exec:
                   command:
-                    - mysql
+                    - mysqladmin
+                    - ping
                     - -h
                     - localhost
-                    - -e
-                    - SELECT 1
                 initialDelaySeconds: 5
-                periodSeconds: 2
-                timeoutSeconds: 1
+                periodSeconds: 10
+                timeoutSeconds: 5
           
           resources:
             requests:
