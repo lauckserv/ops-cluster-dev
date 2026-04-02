@@ -21,6 +21,7 @@ wordpress:
             - sh
             - -c
             - |
+              mkdir -p /var/www/html/wp-content
               chown -R 33:33 /var/www/html/wp-content || true
               chmod -R 755 /var/www/html/wp-content || true
           securityContext:
@@ -198,6 +199,8 @@ wordpress:
       advancedMounts:
         wordpress:
           wordpress:
+            - path: /var/www/html/wp-content
+          fix-permissions:
             - path: /var/www/html/wp-content
       retain: true
 
