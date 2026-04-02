@@ -146,12 +146,11 @@ wordpress:
               spec:
                 exec:
                   command:
-                    - mysqladmin
-                    - ping
-                    - -h
-                    - localhost
+                    - sh
+                    - -c
+                    - "mysqladmin ping -h localhost --silent"
                 initialDelaySeconds: 5
-                periodSeconds: 10
+                periodSeconds: 30
                 timeoutSeconds: 5
           
           resources:
