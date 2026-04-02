@@ -133,7 +133,7 @@ wordpress:
               spec:
                 exec:
                   command:
-                    - mysqladmin
+                    - mariadb-admin
                     - ping
                     - -h
                     - localhost
@@ -146,9 +146,10 @@ wordpress:
               spec:
                 exec:
                   command:
-                    - sh
-                    - -c
-                    - "mysqladmin ping -h localhost --silent"
+                    - mariadb-admin
+                    - ping
+                    - -h
+                    - localhost
                 initialDelaySeconds: 5
                 periodSeconds: 30
                 timeoutSeconds: 5
