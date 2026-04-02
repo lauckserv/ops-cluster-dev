@@ -45,7 +45,7 @@ wordpress:
             WORDPRESS_DB_PASSWORD:
               valueFrom:
                 secretKeyRef:
-                  name: wp-mysql-secret-simple
+                  name: wp-mysql-secret
                   key: mysql-secret
             WORDPRESS_TABLE_PREFIX: wp_
             WORDPRESS_DEBUG: "0"
@@ -114,14 +114,14 @@ wordpress:
             MYSQL_ROOT_PASSWORD:
               valueFrom:
                 secretKeyRef:
-                  name: wp-mysql-secret-simple
+                  name: wp-mysql-secret
                   key: mysql-secret
             MYSQL_DATABASE: wordpress
             MYSQL_USER: wordpress
             MYSQL_PASSWORD:
               valueFrom:
                 secretKeyRef:
-                  name: wp-mysql-secret-simple
+                  name: wp-mysql-secret
                   key: mysql-secret
             # MariaDB specific settings
             MARIADB_AUTO_UPGRADE: "1"
@@ -129,7 +129,7 @@ wordpress:
           
           probes:
             liveness:
-              enabled: true
+              enabled: false
               spec:
                 exec:
                   command:
@@ -142,7 +142,7 @@ wordpress:
                 timeoutSeconds: 5
                 failureThreshold: 3
             readiness:
-              enabled: true
+              enabled: false
               spec:
                 exec:
                   command:
