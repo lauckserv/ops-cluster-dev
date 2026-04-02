@@ -34,6 +34,9 @@ wordpress:
             tag: 6.9.4
             pullPolicy: IfNotPresent
           env:
+            # Apache Configuration
+            APACHE_SERVER_NAME: moonquarterbackclub.org
+            
             # WordPress Configuration
             WORDPRESS_DB_HOST: wordpress-mysql
             WORDPRESS_DB_NAME: wordpress
