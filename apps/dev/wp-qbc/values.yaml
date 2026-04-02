@@ -1,18 +1,43 @@
 wordpress:
   enabled: true
+  global: 
+    fullnameOverride: wordpress
   controllers:
     wordpress:
       enabled: true
       type: deployment
       strategy: Recreate
       replicas: 1
+      pod:
+        securityContext:
+          fsGroup: 33
+          fsGroupChangePolicy: "OnRootMismatch"
+        dnsPolicy: ClusterFirst
+      initContainers:
+        fix-permissions:
+          image:
+            repository: busybox
+            tag: latest
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /var/www/html/wp-content
+              chown -R 33:33 /var/www/html/wp-content || true
+              chmod -R 755 /var/www/html/wp-content || true
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
       containers:
         wordpress:
           image:
             repository: wordpress
-            tag: 6.9.1
+            tag: 6.9.4
             pullPolicy: IfNotPresent
           env:
+            # Apache Configuration
+            APACHE_SERVER_NAME: moonquarterbackclub.org
+            
             # WordPress Configuration
             WORDPRESS_DB_HOST: wordpress-mysql
             WORDPRESS_DB_NAME: wordpress
@@ -20,7 +45,7 @@ wordpress:
             WORDPRESS_DB_PASSWORD:
               valueFrom:
                 secretKeyRef:
-                  name: wp-mysql-secret
+                  name: wp-mysql-secret-simple
                   key: mysql-secret
             WORDPRESS_TABLE_PREFIX: wp_
             WORDPRESS_DEBUG: "0"
@@ -29,6 +54,10 @@ wordpress:
             PHP_MEMORY_LIMIT: 256M
             PHP_UPLOAD_MAX_FILESIZE: 64M
             PHP_POST_MAX_SIZE: 64M
+            
+            # DNS Options (helps with service discovery)
+            WORDPRESS_DB_CHARSET: utf8
+            WORDPRESS_DB_COLLATE: ""
             
           probes:
             liveness:
@@ -85,15 +114,18 @@ wordpress:
             MYSQL_ROOT_PASSWORD:
               valueFrom:
                 secretKeyRef:
-                  name: wp-mysql-secret
+                  name: wp-mysql-secret-simple
                   key: mysql-secret
             MYSQL_DATABASE: wordpress
             MYSQL_USER: wordpress
             MYSQL_PASSWORD:
               valueFrom:
                 secretKeyRef:
-                  name: wp-mysql-secret
+                  name: wp-mysql-secret-simple
                   key: mysql-secret
+            # MariaDB specific settings
+            MARIADB_AUTO_UPGRADE: "1"
+            MARIADB_DISABLE_UPGRADE_BACKUP: "1"
           
           probes:
             liveness:
@@ -101,7 +133,7 @@ wordpress:
               spec:
                 exec:
                   command:
-                    - mysqladmin
+                    - mariadb-admin
                     - ping
                     - -h
                     - localhost
@@ -114,14 +146,13 @@ wordpress:
               spec:
                 exec:
                   command:
-                    - mysql
+                    - mariadb-admin
+                    - ping
                     - -h
                     - localhost
-                    - -e
-                    - SELECT 1
                 initialDelaySeconds: 5
-                periodSeconds: 2
-                timeoutSeconds: 1
+                periodSeconds: 30
+                timeoutSeconds: 5
           
           resources:
             requests:
@@ -160,7 +191,7 @@ wordpress:
       annotations:
         kubernetes.io/ingress.class: nginx
       hosts:
-        - host: wordpress.lauckserv.net
+        - host: moonquarterbackclub.org
           paths:
             - path: /
               pathType: Prefix
@@ -173,19 +204,21 @@ wordpress:
       enabled: true
       type: persistentVolumeClaim
       size: 10Gi
-      storageClass: nfs-client
+      storageClass: nfs-nosquash
       accessMode: ReadWriteOnce
       advancedMounts:
         wordpress:
           wordpress:
-            - path: /var/www/html
+            - path: /var/www/html/wp-content
+          fix-permissions:
+            - path: /var/www/html/wp-content
       retain: true
 
     mysql-data:
       enabled: true
       type: persistentVolumeClaim
       size: 5Gi
-      storageClass: nfs-client
+      storageClass: nfs-nosquash
       accessMode: ReadWriteOnce
       advancedMounts:
         mysql:
