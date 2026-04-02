@@ -39,7 +39,7 @@ wordpress:
             APACHE_SERVER_NAME: moonquarterbackclub.org
             
             # WordPress Configuration
-            WORDPRESS_DB_HOST: mysql
+            WORDPRESS_DB_HOST: wordpress-mysql
             WORDPRESS_DB_NAME: wordpress
             WORDPRESS_DB_USER: wordpress
             WORDPRESS_DB_PASSWORD:
