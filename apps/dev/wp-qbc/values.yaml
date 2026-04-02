@@ -12,6 +12,7 @@ wordpress:
         securityContext:
           fsGroup: 33
           fsGroupChangePolicy: "OnRootMismatch"
+        dnsPolicy: ClusterFirst
       initContainers:
         fix-permissions:
           image:
@@ -38,7 +39,7 @@ wordpress:
             APACHE_SERVER_NAME: moonquarterbackclub.org
             
             # WordPress Configuration
-            WORDPRESS_DB_HOST: wordpress-mysql
+            WORDPRESS_DB_HOST: mysql
             WORDPRESS_DB_NAME: wordpress
             WORDPRESS_DB_USER: wordpress
             WORDPRESS_DB_PASSWORD:
@@ -53,6 +54,10 @@ wordpress:
             PHP_MEMORY_LIMIT: 256M
             PHP_UPLOAD_MAX_FILESIZE: 64M
             PHP_POST_MAX_SIZE: 64M
+            
+            # DNS Options (helps with service discovery)
+            WORDPRESS_DB_CHARSET: utf8
+            WORDPRESS_DB_COLLATE: ""
             
           probes:
             liveness:
@@ -118,6 +123,9 @@ wordpress:
                 secretKeyRef:
                   name: wp-mysql-secret
                   key: mysql-secret
+            # MariaDB specific settings
+            MARIADB_AUTO_UPGRADE: "1"
+            MARIADB_DISABLE_UPGRADE_BACKUP: "1"
           
           probes:
             liveness:
