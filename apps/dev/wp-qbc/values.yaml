@@ -8,6 +8,10 @@ wordpress:
       type: deployment
       strategy: Recreate
       replicas: 1
+      pod:
+        securityContext:
+          fsGroup: 33
+          fsGroupChangePolicy: "OnRootMismatch"
       containers:
         wordpress:
           image:
