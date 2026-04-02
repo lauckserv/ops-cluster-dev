@@ -1,11 +1,12 @@
 wordpress:
   enabled: true
+  global: 
+    fullnameOverride: wordpress
   controllers:
     wordpress:
       enabled: true
       type: deployment
       strategy: Recreate
-      fullnameOverride: wordpress
       replicas: 1
       pod:
         securityContext:
@@ -102,7 +103,6 @@ wordpress:
       enabled: true
       type: deployment
       strategy: Recreate
-      fullnameOverride: mysql
       replicas: 1
       containers:
         mysql:
