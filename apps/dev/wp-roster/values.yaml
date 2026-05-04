@@ -72,6 +72,16 @@ wordpress:
               drop:
                 - ALL
 
+          volumeMounts:
+            - name: php-config
+              mountPath: /usr/local/etc/php/conf.d/custom.ini
+              subPath: php.ini
+
+      volumes:
+        - name: php-config
+          configMap:
+            name: php-config
+
     mysql:
       enabled: true
       type: deployment
@@ -138,6 +148,15 @@ wordpress:
             runAsGroup: 999
             runAsNonRoot: true
             readOnlyRootFilesystem: false
+
+  configMaps:
+    php-config:
+      enabled: true
+      data:
+        php.ini: |
+          upload_max_filesize = 64M
+          post_max_size = 64M
+          memory_limit = 256M
 
   service:
     wordpress:
