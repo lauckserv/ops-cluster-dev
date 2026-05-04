@@ -45,6 +45,9 @@ wordpress:
                   name: wp-mysql-secret
                   key: mysql-secret
 
+            WORDPRESS_CONFIG_EXTRA: |
+              $_SERVER['HTTPS'] = 'on';
+
             WORDPRESS_TABLE_PREFIX: wp_
             WORDPRESS_DEBUG: "0"
             
