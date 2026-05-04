@@ -8,6 +8,26 @@ wordpress:
       type: deployment
       strategy: Recreate
       replicas: 1
+      initContainers:
+        php-ini-setup:
+          image:
+            repository: busybox
+            tag: latest
+            pullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - |
+              cat > /php-ini/custom.ini << 'EOF'
+              upload_max_filesize = 64M
+              post_max_size = 64M
+              memory_limit = 256M
+              max_execution_time = 300
+              max_input_time = 300
+              max_input_vars = 3000
+              EOF
+              echo "PHP configuration file created:"
+              cat /php-ini/custom.ini
       containers:
         wordpress:
           image:
@@ -26,22 +46,6 @@ wordpress:
                   key: mysql-secret
             WORDPRESS_TABLE_PREFIX: wp_
             WORDPRESS_DEBUG: "0"
-            
-            # Additional PHP Configuration
-            PHP_MEMORY_LIMIT: 256M
-            PHP_UPLOAD_MAX_FILESIZE: 64M
-            PHP_POST_MAX_SIZE: 64M
-            PHP_MAX_EXECUTION_TIME: 300
-            PHP_MAX_INPUT_TIME: 300
-            PHP_MAX_INPUT_VARS: 3000
-            
-            # WordPress config extra to enforce PHP settings
-            WORDPRESS_CONFIG_EXTRA: |
-              ini_set('upload_max_filesize', '64M');
-              ini_set('post_max_size', '64M');
-              ini_set('max_execution_time', 300);
-              ini_set('max_input_time', 300);
-              ini_set('max_input_vars', 3000);
             
           probes:
             liveness:
@@ -206,3 +210,13 @@ wordpress:
           mysql:
             - path: /var/lib/mysql
       retain: true
+    
+    php-ini-volume:
+      enabled: true
+      type: emptyDir
+      advancedMounts:
+        wordpress:
+          php-ini-setup:
+            - path: /php-ini
+          wordpress:
+            - path: /usr/local/etc/php/conf.d
