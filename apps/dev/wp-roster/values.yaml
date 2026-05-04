@@ -47,6 +47,14 @@ wordpress:
                 secretKeyRef:
                   name: wp-mysql-secret
                   key: mysql-secret
+
+            WORDPRESS_CONFIG_EXTRA: |
+              /* Force HTTPS */
+              if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+                  $_SERVER['HTTPS'] = 'on';
+              }
+              define('FORCE_SSL_ADMIN', true);
+
             WORDPRESS_TABLE_PREFIX: wp_
             WORDPRESS_DEBUG: "0"
             
@@ -62,25 +70,24 @@ wordpress:
           probes:
             liveness:
               enabled: true
+              type: TCP
               spec:
-                httpGet:
-                  path: /wp-admin/install.php
-                  port: 80
                 initialDelaySeconds: 120
-                periodSeconds: 30
+                periodSeconds: 10
                 timeoutSeconds: 5
-                failureThreshold: 3
+                failureThreshold: 6
             readiness:
               enabled: true
+              type: HTTP
               spec:
-                httpGet:
-                  httpHeaders:
-                    - name: X-Forwarded-Proto
-                      value: https
+                httpHeaders:
+                  - name: X-Forwarded-Proto
+                    value: https
+                path: /wp-login.php
                 initialDelaySeconds: 30
                 periodSeconds: 10
                 timeoutSeconds: 5
-                failureThreshold: 3
+                failureThreshold: 6
           
           resources:
             requests:
