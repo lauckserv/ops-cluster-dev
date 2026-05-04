@@ -206,24 +206,3 @@ wordpress:
           mysql:
             - path: /var/lib/mysql
       retain: true
-
-        
-    wordpress-config:
-      enabled: true
-      data:
-        .htaccess: |
-          # BEGIN WordPress
-          RewriteEngine On
-          RewriteBase /
-          RewriteRule ^index\.php$ - [L]
-          RewriteCond %{REQUEST_FILENAME} !-f
-          RewriteCond %{REQUEST_FILENAME} !-d
-          RewriteRule . /index.php [L]
-          # END WordPress
-          
-          # Security headers
-          <IfModule mod_headers.c>
-              Header always set X-Content-Type-Options nosniff
-              Header always set X-Frame-Options DENY
-              Header always set X-XSS-Protection "1; mode=block"
-          </IfModule>
