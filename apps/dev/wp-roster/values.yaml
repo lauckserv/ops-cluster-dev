@@ -184,10 +184,10 @@ wordpress:
             - path: /var/www/html
       retain: true
 
-    wordpress-php-config:
+    php-config:
       enabled: true
       type: configMap
-      name: php-config
+      name: wordpress-php-config
       advancedMounts:
         wordpress:
           wordpress:
