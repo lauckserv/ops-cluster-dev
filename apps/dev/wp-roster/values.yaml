@@ -184,6 +184,16 @@ wordpress:
             - path: /var/www/html
       retain: true
 
+    php-config:
+      enabled: true
+      type: configMap
+      name: php-config
+      advancedMounts:
+        wordpress:
+          wordpress:
+            - path: /usr/local/etc/php/conf.d/custom.ini
+              subPath: php.ini
+
     mysql-data:
       enabled: true
       type: persistentVolumeClaim
