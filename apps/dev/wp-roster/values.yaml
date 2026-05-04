@@ -31,17 +31,6 @@ wordpress:
             PHP_MEMORY_LIMIT: 256M
             PHP_UPLOAD_MAX_FILESIZE: 64M
             PHP_POST_MAX_SIZE: 64M
-            PHP_MAX_EXECUTION_TIME: 300
-            PHP_MAX_INPUT_TIME: 300
-            PHP_MAX_INPUT_VARS: 3000
-            
-            # WordPress config extra to enforce PHP settings
-            WORDPRESS_CONFIG_EXTRA: |
-              ini_set('upload_max_filesize', '64M');
-              ini_set('post_max_size', '64M');
-              ini_set('max_execution_time', 300);
-              ini_set('max_input_time', 300);
-              ini_set('max_input_vars', 3000);
             
           probes:
             liveness:
@@ -206,3 +195,35 @@ wordpress:
           mysql:
             - path: /var/lib/mysql
       retain: true
+
+  # ConfigMaps for additional configuration
+  configMaps:
+    php-config:
+      enabled: true
+      data:
+        php.ini: |
+          memory_limit = 256M
+          upload_max_filesize = 64M
+          post_max_size = 64M
+          max_execution_time = 300
+          max_input_vars = 3000
+        
+    wordpress-config:
+      enabled: true
+      data:
+        .htaccess: |
+          # BEGIN WordPress
+          RewriteEngine On
+          RewriteBase /
+          RewriteRule ^index\.php$ - [L]
+          RewriteCond %{REQUEST_FILENAME} !-f
+          RewriteCond %{REQUEST_FILENAME} !-d
+          RewriteRule . /index.php [L]
+          # END WordPress
+          
+          # Security headers
+          <IfModule mod_headers.c>
+              Header always set X-Content-Type-Options nosniff
+              Header always set X-Frame-Options DENY
+              Header always set X-XSS-Protection "1; mode=block"
+          </IfModule>
