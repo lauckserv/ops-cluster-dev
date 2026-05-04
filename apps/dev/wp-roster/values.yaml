@@ -59,25 +59,6 @@ wordpress:
             WORDPRESS_DB_CHARSET: utf8
             WORDPRESS_DB_COLLATE: ""
             
-            # SSL Offloading Configuration
-            WORDPRESS_CONFIG_EXTRA: |
-              // SSL Offloading - Trust proxy headers
-              if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-                $_SERVER['HTTPS'] = 'on';
-                $_SERVER['SERVER_PORT'] = 443;
-              }
-              
-              // Alternative header checks for different proxy setups
-              if (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on') {
-                $_SERVER['HTTPS'] = 'on';
-                $_SERVER['SERVER_PORT'] = 443;
-              }
-              
-              // Force WordPress to use HTTPS URLs when behind SSL proxy
-              if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-                define('FORCE_SSL_ADMIN', true);
-              }
-            
           probes:
             liveness:
               enabled: true
@@ -212,8 +193,6 @@ wordpress:
       annotations:
         kubernetes.io/ingress.class: nginx
         nginx.ingress.kubernetes.io/proxy-body-size: 50M
-        nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-        nginx.ingress.kubernetes.io/ssl-redirect: "true"
       hosts:
         - host: recruiting.moonareafootball.com
           paths:
