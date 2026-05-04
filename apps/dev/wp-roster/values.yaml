@@ -72,16 +72,6 @@ wordpress:
               drop:
                 - ALL
 
-          volumeMounts:
-            - name: php-config
-              mountPath: /usr/local/etc/php/conf.d/custom.ini
-              subPath: php.ini
-
-      volumes:
-        - name: php-config
-          configMap:
-            name: php-config
-
     mysql:
       enabled: true
       type: deployment
@@ -157,6 +147,15 @@ wordpress:
           upload_max_filesize = 64M
           post_max_size = 64M
           memory_limit = 256M
+          max_execution_time = 300
+          max_input_time = 300
+          max_input_vars = 3000
+
+  defaultPodOptions:
+    securityContext:
+      runAsUser: 33
+      runAsGroup: 33
+      fsGroup: 33
 
   service:
     wordpress:
@@ -214,6 +213,16 @@ wordpress:
           mysql:
             - path: /var/lib/mysql
       retain: true
+
+    php-config:
+      enabled: true
+      type: configMap
+      name: php-config
+      advancedMounts:
+        wordpress:
+          wordpress:
+            - path: /usr/local/etc/php/conf.d/custom.ini
+              subPath: php.ini
 
   # ConfigMaps for additional configuration
   configMaps:
