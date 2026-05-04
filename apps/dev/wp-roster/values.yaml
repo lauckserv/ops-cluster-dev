@@ -45,39 +45,6 @@ wordpress:
                   name: wp-mysql-secret
                   key: mysql-secret
 
-            WORDPRESS_CONFIG_EXTRA: |
-              // SSL Offloading for nginx proxy setup
-              // Check if we're behind your SSL-terminating proxy
-              if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
-                  $_SERVER['HTTPS'] = 'on';
-                  $_SERVER['SERVER_PORT'] = '443';
-                  
-                  // Set proper scheme for WordPress URL generation
-                  if (!defined('WP_HOME')) {
-                      define('WP_HOME', 'https://' . $_SERVER['HTTP_HOST']);
-                  }
-                  if (!defined('WP_SITEURL')) {
-                      define('WP_SITEURL', 'https://' . $_SERVER['HTTP_HOST']);
-                  }
-              }
-              
-              // Handle forwarded port header
-              if (isset($_SERVER['HTTP_X_FORWARDED_PORT']) && $_SERVER['HTTP_X_FORWARDED_PORT'] == '443') {
-                  $_SERVER['HTTPS'] = 'on';
-                  $_SERVER['SERVER_PORT'] = '443';
-              }
-              
-              // Trust your proxy for client IP detection
-              if (isset($_SERVER['HTTP_X_REAL_IP'])) {
-                  $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_X_REAL_IP'];
-              } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                  $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-                  $_SERVER['REMOTE_ADDR'] = trim($ips[0]);
-              }
-              
-              // Force SSL admin and login
-              define('FORCE_SSL_ADMIN', true);
-
             WORDPRESS_TABLE_PREFIX: wp_
             WORDPRESS_DEBUG: "0"
             
