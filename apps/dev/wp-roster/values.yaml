@@ -184,7 +184,7 @@ wordpress:
             - path: /var/www/html
       retain: true
 
-    php-config:
+    wordpress-php-config:
       enabled: true
       type: configMap
       name: php-config
