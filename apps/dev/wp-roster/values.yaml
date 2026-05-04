@@ -8,6 +8,26 @@ wordpress:
       type: deployment
       strategy: Recreate
       replicas: 1
+      pod:
+        securityContext:
+          fsGroup: 33
+          fsGroupChangePolicy: "OnRootMismatch"
+        dnsPolicy: ClusterFirst
+      initContainers:
+        fix-permissions:
+          image:
+            repository: busybox
+            tag: latest
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /var/www/html/wp-content
+              chown -R 33:33 /var/www/html/wp-content || true
+              chmod -R 755 /var/www/html/wp-content || true
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
       containers:
         wordpress:
           image:
@@ -15,6 +35,9 @@ wordpress:
             tag: 6.9.4
             pullPolicy: IfNotPresent
           env:
+            # Apache Configuration
+            APACHE_SERVER_NAME: roster.moonareafootball.com
+            
             # WordPress Configuration
             WORDPRESS_DB_HOST: wordpress-mysql
             WORDPRESS_DB_NAME: wordpress
@@ -31,6 +54,10 @@ wordpress:
             PHP_MEMORY_LIMIT: 256M
             PHP_UPLOAD_MAX_FILESIZE: 64M
             PHP_POST_MAX_SIZE: 64M
+            
+            # DNS Options (helps with service discovery)
+            WORDPRESS_DB_CHARSET: utf8
+            WORDPRESS_DB_COLLATE: ""
             
           probes:
             liveness:
@@ -96,14 +123,17 @@ wordpress:
                 secretKeyRef:
                   name: wp-mysql-secret
                   key: mysql-secret
+            # MariaDB specific settings
+            MARIADB_AUTO_UPGRADE: "1"
+            MARIADB_DISABLE_UPGRADE_BACKUP: "1"
           
           probes:
             liveness:
-              enabled: true
+              enabled: false
               spec:
                 exec:
                   command:
-                    - mysqladmin
+                    - mariadb-admin
                     - ping
                     - -h
                     - localhost
@@ -112,18 +142,19 @@ wordpress:
                 timeoutSeconds: 5
                 failureThreshold: 3
             readiness:
-              enabled: true
+              enabled: false
               spec:
                 exec:
                   command:
-                    - mysql
+                    - mariadb-admin
+                    - ping
                     - -h
                     - localhost
                     - -e
                     - SELECT 1
                 initialDelaySeconds: 5
-                periodSeconds: 2
-                timeoutSeconds: 1
+                periodSeconds: 30
+                timeoutSeconds: 5
           
           resources:
             requests:
@@ -181,7 +212,9 @@ wordpress:
       advancedMounts:
         wordpress:
           wordpress:
-            - path: /var/www/html
+            - path: /var/www/html/wp-content
+          fix-permissions:
+            - path: /var/www/html/wp-content
       retain: true
 
     php-config:
