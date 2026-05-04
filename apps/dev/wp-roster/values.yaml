@@ -51,7 +51,7 @@ wordpress:
             WORDPRESS_DEBUG: "0"
             
             # Additional PHP Configuration
-            PHP_MEMORY_LIMIT: 256M
+            PHP_MEMORY_LIMIT: 512M
             PHP_UPLOAD_MAX_FILESIZE: 64M
             PHP_POST_MAX_SIZE: 64M
             
@@ -84,10 +84,10 @@ wordpress:
           resources:
             requests:
               cpu: 100m
-              memory: 256Mi
+              memory: 512Mi
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 1024Mi
               
           securityContext:
             runAsUser: 33  # www-data user
@@ -245,7 +245,7 @@ wordpress:
       enabled: true
       data:
         php.ini: |
-          memory_limit = 256M
+          memory_limit = 512M
           upload_max_filesize = 64M
           post_max_size = 64M
           max_execution_time = 300
