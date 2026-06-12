@@ -17,3 +17,24 @@ spec:
     directory:
       recurse: true
       jsonnet: {}
+
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tempssd-cluster-resources
+  labels:
+    lauckserv.io/environment: tempssd
+    lauckserv.io/category: resources
+spec:
+  destination:
+    server: https://rancher.lauckserv.net/k8s/clusters/c-m-p5cdbdzp
+    namespace: cluster-tools
+  project: cluster-tools
+  source:
+    path: cluster-resources
+    repoURL: https://github.com/lauckserv/ops-cluster-dev
+    targetRevision: HEAD
+    directory:
+      recurse: true
+      jsonnet: {}
