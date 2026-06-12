@@ -7,7 +7,7 @@ metadata:
     lauckserv.io/category: resources
 spec:
   destination:
-    server: https://rancher.lauckserv.net/k8s/clusters/c-m-p5cdbdzp
+    server: https://192.168.225.13:6443
     namespace: cluster-tools
   project: cluster-tools
   source:
