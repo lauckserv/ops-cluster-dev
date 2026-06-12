@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: dev-cluster-resources
+  name: tempssd-cluster-resources
   labels:
-    lauckserv.io/environment: dev
+    lauckserv.io/environment: tempssd
     lauckserv.io/category: resources
 spec:
   destination:
-    server: https://rancher.lauckserv.net/k8s/clusters/c-m-m59fwj8l
+    server: https://rancher.lauckserv.net/k8s/clusters/c-m-p5cdbdzp
     namespace: cluster-tools
   project: cluster-tools
   source:
